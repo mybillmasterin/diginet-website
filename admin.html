@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — Diginet IT Solutions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Admin Custom Specific Layout Styles */
+  body.admin-body {
+    background: #090e1a;
+    color: #e2e8f0;
+    min-height: 100vh;
+  }
+  .admin-nav {
+    background: rgba(13, 21, 38, 0.95);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 90;
+  }
+  .admin-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .admin-badge {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--leaf-light);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    margin-left: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .login-container {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+  .login-card {
+    background: rgba(16, 26, 48, 0.9);
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 20px;
+    padding: 40px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.15);
+    text-align: center;
+    animation: fadeUp 0.4s ease;
+  }
+  .login-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 18px;
+    background: linear-gradient(135deg, var(--leaf), #2563eb);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    color: #fff;
+    box-shadow: 0 10px 25px -5px var(--accent-glow);
+  }
+  .login-card h2 {
+    font-size: 24px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .login-card p {
+    color: var(--steel);
+    font-size: 14px;
+    margin-bottom: 24px;
+  }
+  .form-group {
+    margin-bottom: 18px;
+    text-align: left;
+  }
+  .form-group label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #94a3b8;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .form-control {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(9, 14, 26, 0.8);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14.5px;
+    transition: all 0.2s;
+  }
+  .form-control:focus {
+    outline: none;
+    border-color: var(--leaf);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  }
+  .admin-main {
+    padding: 32px 0 80px;
+  }
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 18px;
+    margin-bottom: 32px;
+  }
+  @media(max-width: 900px) {
+    .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media(max-width: 500px) {
+    .metrics-grid { grid-template-columns: 1fr; }
+  }
+  .metric-card {
+    background: rgba(16, 26, 48, 0.7);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: rgba(59, 130, 246, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--leaf-light);
+    flex-shrink: 0;
+  }
+  .metric-info b {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 26px;
+    color: #fff;
+    display: block;
+    line-height: 1.1;
+  }
+  .metric-info span {
+    font-size: 12.5px;
+    color: var(--steel);
+  }
+  .control-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    background: rgba(16, 26, 48, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 16px;
+    padding: 18px 20px;
+    margin-bottom: 24px;
+  }
+  .control-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .search-box {
+    position: relative;
+    min-width: 240px;
+    flex: 1;
+    max-width: 380px;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 10px 14px 10px 38px;
+    background: rgba(9, 14, 26, 0.9);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+  }
+  .search-box svg {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--steel);
+  }
+  .control-select {
+    padding: 10px 14px;
+    background: rgba(9, 14, 26, 0.9);
+    border: 1px solid rgba(96, 165, 250, 0.2);
+    border-radius: 10px;
+    color: #fff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .table-card {
+    background: rgba(16, 26, 48, 0.8);
+    border: 1px solid rgba(59, 130, 246, 0.15);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .inventory-table th {
+    background: rgba(13, 21, 38, 0.9);
+    padding: 14px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+  }
+  .inventory-table td {
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 14px;
+    vertical-align: middle;
+  }
+  .inventory-table tr:hover td {
+    background: rgba(59, 130, 246, 0.03);
+  }
+  .item-thumb-sm {
+    width: 54px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(9, 14, 26, 0.8);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(59, 130, 246, 0.2);
+  }
+  .item-thumb-sm img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .item-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .item-name-cell .title {
+    font-weight: 600;
+    color: #fff;
+  }
+  .item-name-cell .sub {
+    font-size: 12px;
+    color: var(--steel);
+  }
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .status-badge.active {
+    background: rgba(34, 197, 94, 0.15);
+    color: #4ade80;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+  }
+  .status-badge.sold {
+    background: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+  .actions-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-icon:hover {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: var(--leaf);
+  }
+  .btn-icon.delete:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #f87171;
+  }
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  .modal-overlay.active {
+    display: flex;
+  }
+  .modal-content {
+    background: #0e172a;
+    border: 1px solid rgba(59, 130, 246, 0.25);
+    border-radius: 20px;
+    width: 100%;
+    max-width: 680px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 32px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+    animation: fadeUp 0.3s ease;
+  }
+  .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 16px;
+  }
+  .modal-header h3 {
+    font-size: 20px;
+    color: #fff;
+  }
+  .form-grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media(max-width: 600px) {
+    .form-grid-2 { grid-template-columns: 1fr; }
+  }
+  /* Photo Upload Dropzone */
+  .dropzone {
+    border: 2px dashed rgba(59, 130, 246, 0.35);
+    border-radius: 14px;
+    padding: 24px;
+    text-align: center;
+    background: rgba(9, 14, 26, 0.6);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    margin-bottom: 18px;
+  }
+  .dropzone:hover, .dropzone.dragover {
+    border-color: var(--leaf);
+    background: rgba(59, 130, 246, 0.08);
+  }
+  .dropzone input[type="file"] {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+  }
+  .dropzone-preview {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dropzone-preview img {
+    max-height: 160px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    object-fit: contain;
+  }
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 300;
+    background: #1e293b;
+    color: #fff;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 14px 22px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
+  }
+</style>
+</head>
+<body class="admin-body">
+
+<!-- Admin Top Navigation -->
+<nav class="admin-nav">
+  <div class="logo">
+    <a href="index.html" style="display:flex; align-items:center; gap:12px;">
+      <div class="logo-mark"></div>
+      <div class="logo-text">
+        <div class="name">DIGINET IT SOLUTIONS <span class="admin-badge">Admin</span></div>
+      </div>
+    </a>
+  </div>
+  <div class="admin-header-actions" id="adminHeaderActions" style="display:none;">
+    <a href="index.html" target="_blank" class="btn btn-ghost" style="padding:8px 16px; font-size:13px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      Live Website
+    </a>
+    <button class="btn btn-ghost" id="btnLogout" style="padding:8px 16px; font-size:13px; border-color:rgba(239,68,68,0.4); color:#fca5a5;">
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- 1. LOGIN SCREEN -->
+<div class="login-container" id="loginView">
+  <div class="login-card">
+    <div class="login-icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    </div>
+    <h2>Admin Portal</h2>
+    <p>Sign in to manage refurbished laptop inventory, prices, and listings.</p>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="passcode">Admin Passcode</label>
+        <input type="password" class="form-control" id="passcode" placeholder="Enter admin passcode" required autofocus>
+      </div>
+      <div id="loginError" style="color:#f87171; font-size:13px; margin-bottom:14px; display:none;">
+        Incorrect passcode. Please try again.
+      </div>
+      <button type="submit" class="btn btn-primary" style="width:100%; justify-content:center;">
+        Unlock Dashboard →
+      </button>
+      <div style="margin-top:16px; font-size:12px; color:var(--steel);">
+        Default passcode: <span class="mono" style="color:var(--leaf-light);">admin123</span>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 2. MAIN DASHBOARD (Protected) -->
+<div class="wrap admin-main" id="dashboardView" style="display:none;">
+  <!-- Metrics Counters -->
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+      </div>
+      <div class="metric-info">
+        <b id="statTotal">0</b>
+        <span>Total Units</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:rgba(34,197,94,0.12); color:#4ade80;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 14 14"/></svg>
+      </div>
+      <div class="metric-info">
+        <b id="statActive">0</b>
+        <span>Active in Stock</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:rgba(239,68,68,0.12); color:#f87171;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+      </div>
+      <div class="metric-info">
+        <b id="statSold">0</b>
+        <span>Sold Out</span>
+      </div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-icon" style="background:rgba(245,158,11,0.12); color:#fbbf24;">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+      </div>
+      <div class="metric-info">
+        <b id="statValue">₹0</b>
+        <span>Stock Value</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions and Filter Bar -->
+  <div class="control-bar">
+    <div class="control-left">
+      <div class="search-box">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" id="searchInput" placeholder="Search by model, ID, CPU, RAM...">
+      </div>
+      <select class="control-select" id="brandFilter">
+        <option value="all">All Brands</option>
+        <option value="Dell">Dell</option>
+        <option value="HP">HP</option>
+        <option value="Lenovo">Lenovo</option>
+        <option value="Apple">Apple</option>
+        <option value="Acer">Acer</option>
+        <option value="ASUS">ASUS</option>
+      </select>
+      <select class="control-select" id="statusFilter">
+        <option value="all">All Status</option>
+        <option value="active">Active Only</option>
+        <option value="sold">Sold Only</option>
+      </select>
+    </div>
+    <div style="display:flex; gap:10px;">
+      <button class="btn btn-primary" id="btnAddNew">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Laptop
+      </button>
+      <button class="btn btn-ghost" id="btnExport" title="Export Backup JSON">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Export
+      </button>
+      <button class="btn btn-ghost" id="btnResetDefaults" title="Restore default demo listings" style="color:var(--steel); font-size:12px;">
+        Reset
+      </button>
+    </div>
+  </div>
+
+  <!-- Inventory Table -->
+  <div class="table-card">
+    <div style="overflow-x:auto;">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>Laptop / Model</th>
+            <th>Specs (CPU / RAM / SSD)</th>
+            <th>Grade</th>
+            <th>Price</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryBody">
+          <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--steel);">Loading inventory...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 3. ADD / EDIT LAPTOP MODAL -->
+<div class="modal-overlay" id="laptopModal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h3 id="modalTitle">Upload New Laptop</h3>
+      <button id="modalClose" class="btn-icon" style="background:none; border:none; color:var(--steel); cursor:pointer;">✕</button>
+    </div>
+    <form id="laptopForm">
+      <input type="hidden" id="editLaptopId">
+
+      <!-- Photo Upload Dropzone -->
+      <div class="form-group">
+        <label>Laptop Photo</label>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="photoInput" accept="image/*">
+          <div id="dropzonePrompt">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="color:var(--leaf); margin-bottom:8px;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+            <div style="font-weight:600; color:#fff; font-size:14px;">Click or Drag Laptop Photo Here</div>
+            <div style="font-size:12px; color:var(--steel); margin-top:4px;">Supports JPG, PNG, WebP (auto-optimized)</div>
+          </div>
+          <div class="dropzone-preview" id="dropzonePreview">
+            <img id="previewImg" src="" alt="Preview">
+            <button type="button" class="btn btn-ghost" id="btnRemovePhoto" style="padding:4px 12px; font-size:12px; border-color:rgba(239,68,68,0.4); color:#fca5a5;">
+              Remove Photo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="brandSelect">Brand *</label>
+          <select class="form-control" id="brandSelect" required>
+            <option value="Dell">Dell</option>
+            <option value="HP">HP</option>
+            <option value="Lenovo">Lenovo</option>
+            <option value="Apple">Apple</option>
+            <option value="Acer">Acer</option>
+            <option value="ASUS">ASUS</option>
+            <option value="MSI">MSI</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="laptopName">Laptop Model Name *</label>
+          <input type="text" class="form-control" id="laptopName" placeholder="e.g. Dell Latitude 5490" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="cpu">Processor / CPU *</label>
+          <input type="text" class="form-control" id="cpu" placeholder="e.g. Intel i5-8th Gen" required>
+        </div>
+        <div class="form-group">
+          <label for="ram">RAM Memory *</label>
+          <input type="text" class="form-control" id="ram" placeholder="e.g. 16GB DDR4" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="storage">Storage *</label>
+          <input type="text" class="form-control" id="storage" placeholder="e.g. 512GB SSD" required>
+        </div>
+        <div class="form-group">
+          <label for="screen">Display / Screen *</label>
+          <input type="text" class="form-control" id="screen" placeholder='e.g. 14" FHD IPS' required>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="gpu">Graphics / GPU</label>
+          <input type="text" class="form-control" id="gpu" placeholder="e.g. Intel UHD Graphics 620">
+        </div>
+        <div class="form-group">
+          <label for="battery">Battery Life</label>
+          <input type="text" class="form-control" id="battery" placeholder="e.g. 6-7 Hours, Li-Ion">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="price">Selling Price (₹) *</label>
+          <input type="number" class="form-control" id="price" placeholder="e.g. 18500" required>
+        </div>
+        <div class="form-group">
+          <label for="wasPrice">Original / Was Price (₹)</label>
+          <input type="number" class="form-control" id="wasPrice" placeholder="e.g. 24000 (optional)">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="grade">Quality Grade</label>
+          <select class="form-control" id="grade">
+            <option value="A">Grade A (Like New / Mint)</option>
+            <option value="B">Grade B (Minor Scratches)</option>
+            <option value="A+">Grade A+ (Pristine)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="status">Stock Status</label>
+          <select class="form-control" id="status">
+            <option value="active">🟢 Active (In Stock &amp; Visible)</option>
+            <option value="sold">🔴 Sold (Hidden from buyers)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="released">Condition / Year Tag</label>
+        <input type="text" class="form-control" id="released" placeholder="e.g. Refurbished 2024 / Tested">
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:24px; border-top:1px solid rgba(255,255,255,0.08); padding-top:20px;">
+        <button type="button" class="btn btn-ghost" id="btnCancelModal">Cancel</button>
+        <button type="submit" class="btn btn-primary" id="btnSaveLaptop">
+          💾 Save &amp; Publish to Website
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Toast notification popup -->
+<div class="toast" id="toast">
+  <span id="toastIcon">✅</span>
+  <span id="toastMsg">Action completed</span>
+</div>
+
+<script src="data.js"></script>
+<script>
+  let CURRENT_LAPTOPS = [];
+  let currentPhotoDataUrl = "";
+
+  // Elements
+  const loginView = document.getElementById('loginView');
+  const dashboardView = document.getElementById('dashboardView');
+  const adminHeaderActions = document.getElementById('adminHeaderActions');
+  const loginForm = document.getElementById('loginForm');
+  const passcode = document.getElementById('passcode');
+  const loginError = document.getElementById('loginError');
+  const btnLogout = document.getElementById('btnLogout');
+
+  const inventoryBody = document.getElementById('inventoryBody');
+  const statTotal = document.getElementById('statTotal');
+  const statActive = document.getElementById('statActive');
+  const statSold = document.getElementById('statSold');
+  const statValue = document.getElementById('statValue');
+
+  const searchInput = document.getElementById('searchInput');
+  const brandFilter = document.getElementById('brandFilter');
+  const statusFilter = document.getElementById('statusFilter');
+
+  const btnAddNew = document.getElementById('btnAddNew');
+  const laptopModal = document.getElementById('laptopModal');
+  const modalClose = document.getElementById('modalClose');
+  const btnCancelModal = document.getElementById('btnCancelModal');
+  const laptopForm = document.getElementById('laptopForm');
+  const modalTitle = document.getElementById('modalTitle');
+
+  const photoInput = document.getElementById('photoInput');
+  const dropzonePrompt = document.getElementById('dropzonePrompt');
+  const dropzonePreview = document.getElementById('dropzonePreview');
+  const previewImg = document.getElementById('previewImg');
+  const btnRemovePhoto = document.getElementById('btnRemovePhoto');
+
+  const btnExport = document.getElementById('btnExport');
+  const btnResetDefaults = document.getElementById('btnResetDefaults');
+  const toast = document.getElementById('toast');
+  const toastMsg = document.getElementById('toastMsg');
+  const toastIcon = document.getElementById('toastIcon');
+
+  function showToast(msg, icon = "✅") {
+    toastMsg.textContent = msg;
+    toastIcon.textContent = icon;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+
+  /* ---------------- AUTHENTICATION ---------------- */
+  function checkAuth() {
+    if (AdminAuth.isLoggedIn()) {
+      loginView.style.display = 'none';
+      dashboardView.style.display = 'block';
+      adminHeaderActions.style.display = 'flex';
+      loadAdminData();
+    } else {
+      loginView.style.display = 'flex';
+      dashboardView.style.display = 'none';
+      adminHeaderActions.style.display = 'none';
+    }
+  }
+
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (AdminAuth.login(passcode.value)) {
+      loginError.style.display = 'none';
+      passcode.value = '';
+      checkAuth();
+      showToast("Welcome to Diginet Admin Portal!");
+    } else {
+      loginError.style.display = 'block';
+      passcode.focus();
+    }
+  });
+
+  btnLogout.addEventListener('click', () => {
+    AdminAuth.logout();
+    checkAuth();
+    showToast("Logged out successfully.", "🔒");
+  });
+
+  /* ---------------- INVENTORY DATA & STATS ---------------- */
+  async function loadAdminData() {
+    CURRENT_LAPTOPS = await DiginetDB.getAll();
+    updateStats(CURRENT_LAPTOPS);
+    renderTable(getFilteredLaptops());
+  }
+
+  function updateStats(list) {
+    const total = list.length;
+    const active = list.filter(l => (l.status || "active") !== "sold").length;
+    const sold = total - active;
+    const totalVal = list
+      .filter(l => (l.status || "active") !== "sold")
+      .reduce((sum, l) => sum + (Number(l.price) || 0), 0);
+
+    statTotal.textContent = total;
+    statActive.textContent = active;
+    statSold.textContent = sold;
+    statValue.textContent = inr(totalVal);
+  }
+
+  function getFilteredLaptops() {
+    const q = searchInput.value.toLowerCase().trim();
+    const b = brandFilter.value;
+    const s = statusFilter.value;
+
+    return CURRENT_LAPTOPS.filter(l => {
+      const matchesQ = !q ||
+        (l.name && l.name.toLowerCase().includes(q)) ||
+        (l.id && l.id.toLowerCase().includes(q)) ||
+        (l.cpu && l.cpu.toLowerCase().includes(q)) ||
+        (l.ram && l.ram.toLowerCase().includes(q)) ||
+        (l.storage && l.storage.toLowerCase().includes(q));
+
+      const matchesB = b === 'all' || (l.brand && l.brand.toLowerCase() === b.toLowerCase());
+      const status = (l.status || "active").toLowerCase();
+      const matchesS = s === 'all' || status === s;
+
+      return matchesQ && matchesB && matchesS;
+    });
+  }
+
+  function renderTable(list) {
+    if (!list.length) {
+      inventoryBody.innerHTML = `
+        <tr><td colspan="6" style="text-align:center; padding:40px; color:var(--steel);">
+          No matching laptops found. Click "Add Laptop" to upload one.
+        </td></tr>`;
+      return;
+    }
+
+    inventoryBody.innerHTML = list.map(l => {
+      const isSold = (l.status || "active").toLowerCase() === "sold";
+      const imgTag = l.image
+        ? `<img src="${l.image}" alt="${l.name}">`
+        : `<span class="mono" style="font-weight:700; color:var(--steel);">${(l.brand || "?").charAt(0)}</span>`;
+
+      return `
+        <tr>
+          <td>
+            <div class="item-name-cell">
+              <div class="item-thumb-sm">${imgTag}</div>
+              <div>
+                <div class="title">${l.name}</div>
+                <div class="sub">${l.id} · ${l.brand}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-family:'JetBrains Mono'; font-size:12.5px; color:#cbd5e1;">
+              ${[l.cpu, l.ram, l.storage].filter(Boolean).join(' · ')}
+            </div>
+            <div style="font-size:11.5px; color:var(--steel);">${l.screen || ''}</div>
+          </td>
+          <td>
+            <span class="grade-stamp ${l.grade || 'A'}" style="display:inline-block; transform:none; font-size:10px; padding:2px 8px;">
+              GRADE ${l.grade || 'A'}
+            </span>
+          </td>
+          <td>
+            <b style="font-family:'Space Grotesk'; font-size:15px; color:#fff;">${inr(l.price)}</b>
+            ${l.was ? `<span style="font-size:12px; color:var(--steel); text-decoration:line-through; margin-left:4px;">${inr(l.was)}</span>` : ''}
+          </td>
+          <td>
+            <span class="status-badge ${isSold ? 'sold' : 'active'}">
+              ${isSold ? '● Sold' : '● In Stock'}
+            </span>
+          </td>
+          <td>
+            <div class="actions-cell">
+              <button class="btn-icon" title="${isSold ? 'Mark as Active' : 'Mark as Sold'}" onclick="handleToggleStatus('${l.id}')">
+                ${isSold ? '🟢' : '🔴'}
+              </button>
+              <button class="btn-icon" title="Edit Laptop Details" onclick="handleEdit('${l.id}')">
+                ✏️
+              </button>
+              <a class="btn-icon" title="View on Website" href="product.html?id=${encodeURIComponent(l.id)}" target="_blank">
+                👁️
+              </a>
+              <button class="btn-icon delete" title="Delete Laptop" onclick="handleDelete('${l.id}')">
+                🗑️
+              </button>
+            </div>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  }
+
+  // Filters Event Listeners
+  searchInput.addEventListener('input', () => renderTable(getFilteredLaptops()));
+  brandFilter.addEventListener('change', () => renderTable(getFilteredLaptops()));
+  statusFilter.addEventListener('change', () => renderTable(getFilteredLaptops()));
+
+  /* ---------------- PHOTO UPLOAD & PREVIEW ---------------- */
+  photoInput.addEventListener('change', async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      try {
+        currentPhotoDataUrl = await compressImage(file, 1000, 0.85);
+        showPhotoPreview(currentPhotoDataUrl);
+      } catch (err) {
+        alert("Could not process image file: " + err.message);
+      }
+    }
+  });
+
+  function showPhotoPreview(url) {
+    if (url) {
+      previewImg.src = url;
+      dropzonePrompt.style.display = 'none';
+      dropzonePreview.style.display = 'flex';
+    } else {
+      previewImg.src = '';
+      dropzonePrompt.style.display = 'block';
+      dropzonePreview.style.display = 'none';
+    }
+  }
+
+  btnRemovePhoto.addEventListener('click', (e) => {
+    e.stopPropagation();
+    currentPhotoDataUrl = "";
+    photoInput.value = "";
+    showPhotoPreview("");
+  });
+
+  /* ---------------- MODAL MANAGEMENT ---------------- */
+  function openModal(editingItem = null) {
+    laptopForm.reset();
+    currentPhotoDataUrl = "";
+    showPhotoPreview("");
+
+    if (editingItem) {
+      modalTitle.textContent = "Edit Laptop Details";
+      document.getElementById('editLaptopId').value = editingItem.id;
+      document.getElementById('brandSelect').value = editingItem.brand || "Dell";
+      document.getElementById('laptopName').value = editingItem.name || "";
+      document.getElementById('cpu').value = editingItem.cpu || "";
+      document.getElementById('ram').value = editingItem.ram || "";
+      document.getElementById('storage').value = editingItem.storage || "";
+      document.getElementById('screen').value = editingItem.screen || "";
+      document.getElementById('gpu').value = editingItem.gpu || "";
+      document.getElementById('battery').value = editingItem.battery || "";
+      document.getElementById('price').value = editingItem.price || "";
+      document.getElementById('wasPrice').value = editingItem.was || "";
+      document.getElementById('grade').value = editingItem.grade || "A";
+      document.getElementById('status').value = editingItem.status || "active";
+      document.getElementById('released').value = editingItem.released || "";
+
+      if (editingItem.image) {
+        currentPhotoDataUrl = editingItem.image;
+        showPhotoPreview(currentPhotoDataUrl);
+      }
+    } else {
+      modalTitle.textContent = "Upload New Laptop";
+      document.getElementById('editLaptopId').value = "";
+      document.getElementById('grade').value = "A";
+      document.getElementById('status').value = "active";
+      document.getElementById('released').value = "Refurbished 2024 / Tested";
+    }
+
+    laptopModal.classList.add('active');
+  }
+
+  function closeModal() {
+    laptopModal.classList.remove('active');
+  }
+
+  btnAddNew.addEventListener('click', () => openModal());
+  modalClose.addEventListener('click', closeModal);
+  btnCancelModal.addEventListener('click', closeModal);
+
+  laptopForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const editId = document.getElementById('editLaptopId').value;
+
+    const laptopData = {
+      id: editId || ("DGN-RL-" + Math.floor(1000 + Math.random() * 9000)),
+      brand: document.getElementById('brandSelect').value,
+      name: document.getElementById('laptopName').value.trim(),
+      cpu: document.getElementById('cpu').value.trim(),
+      ram: document.getElementById('ram').value.trim(),
+      storage: document.getElementById('storage').value.trim(),
+      screen: document.getElementById('screen').value.trim(),
+      gpu: document.getElementById('gpu').value.trim() || "Integrated Graphics",
+      battery: document.getElementById('battery').value.trim() || "5-6 Hrs, Li-Ion",
+      price: document.getElementById('price').value,
+      was: document.getElementById('wasPrice').value || "",
+      grade: document.getElementById('grade').value,
+      status: document.getElementById('status').value,
+      released: document.getElementById('released').value.trim() || "Refurbished",
+      image: currentPhotoDataUrl || "",
+      addedAt: Date.now()
+    };
+
+    try {
+      await DiginetDB.put(laptopData);
+      closeModal();
+      await loadAdminData();
+      showToast(editId ? "Laptop details updated!" : "New laptop published live to website! 🎉");
+    } catch (err) {
+      alert("Error saving laptop: " + err.message);
+    }
+  });
+
+  /* ---------------- TABLE ACTIONS ---------------- */
+  window.handleToggleStatus = async function(id) {
+    const updated = await DiginetDB.toggleStatus(id);
+    if (updated) {
+      await loadAdminData();
+      showToast(`Status updated to ${updated.status.toUpperCase()}`);
+    }
+  };
+
+  window.handleEdit = async function(id) {
+    const item = await DiginetDB.get(id);
+    if (item) {
+      openModal(item);
+    }
+  };
+
+  window.handleDelete = async function(id) {
+    const item = await DiginetDB.get(id);
+    const itemName = item ? item.name : id;
+    if (confirm(`Are you sure you want to permanently delete "${itemName}"?`)) {
+      await DiginetDB.delete(id);
+      await loadAdminData();
+      showToast("Laptop deleted.", "🗑️");
+    }
+  };
+
+  /* ---------------- BACKUP & RESET ---------------- */
+  btnExport.addEventListener('click', async () => {
+    const json = await DiginetDB.exportJSON();
+    const blob = new Blob([json], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `diginet-laptops-backup-${new Date().toISOString().slice(0,10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast("Inventory backup downloaded!", "📥");
+  });
+
+  btnResetDefaults.addEventListener('click', async () => {
+    if (confirm("Reset inventory back to the default 6 starter laptops? Any custom added items will be replaced.")) {
+      await DiginetDB.reset();
+      await loadAdminData();
+      showToast("Restored to default inventory.");
+    }
+  });
+
+  // Init
+  checkAuth();
+</script>
+</body>
+</html>

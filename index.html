@@ -109,14 +109,13 @@
       <h2>Refurbished laptops, tested &amp; graded</h2>
       <p>Every unit is inspected, cleaned and benchmarked before listing. Click any laptop to see full specs, then enquire directly on WhatsApp.</p>
     </div>
-    <div class="filter-row" data-reveal>
+    <div class="filter-row" id="filterRow" data-reveal>
       <button class="chip active" data-filter="all">All</button>
       <button class="chip" data-filter="Dell">Dell</button>
       <button class="chip" data-filter="HP">HP</button>
       <button class="chip" data-filter="Lenovo">Lenovo</button>
     </div>
     <div class="laptop-grid" id="laptopGrid"><div class="state-msg">Loading stock…</div></div>
-    <p class="laptops-note">Stock is managed from a Google Sheet — see <span class="mono">assets/data.js</span> for setup steps. Add a row to list a laptop, mark it "sold" to remove it — no code changes needed.</p>
   </div>
 </section>
 
@@ -175,6 +174,7 @@
         <div class="contact-line" style="display:block;"><a href="#laptops">Refurbished Laptops</a></div>
         <div class="contact-line" style="display:block;"><a href="#services">Our Services</a></div>
         <div class="contact-line" style="display:block;"><a href="#brands">Brands</a></div>
+        <div class="contact-line" style="display:block;"><a href="admin.html" style="color:var(--leaf-light); font-weight:600;">🔒 Admin Portal</a></div>
       </div>
       <div>
         <h4>Serving</h4>
@@ -186,7 +186,7 @@
     </div>
     <div class="bottom-bar">
       <span>© 2026 Diginet IT Solutions. All rights reserved.</span>
-      <span>www.diginetitsolutions.com</span>
+      <span><a href="admin.html" style="color:rgba(255,255,255,0.45); transition:color .2s;">Admin Login</a> · www.diginetitsolutions.com</span>
     </div>
   </div>
 </footer>
@@ -199,6 +199,7 @@
 <script>
   let ALL_LAPTOPS = [];
   const grid = document.getElementById('laptopGrid');
+  const filterRow = document.getElementById('filterRow');
 
   function cardHtml(l){
     const img = l.image
@@ -208,17 +209,17 @@
       <a class="laptop-card" href="product.html?id=${encodeURIComponent(l.id)}">
         <div class="tag-strip">
           <span class="asset-id">${l.id}</span>
-          <span class="grade-stamp ${l.grade || 'A'}">GRADE ${l.grade || '-'}</span>
+          <span class="grade-stamp ${l.grade || 'A'}">GRADE ${l.grade || 'A'}</span>
         </div>
         <div class="laptop-thumb">${img}</div>
         <div class="laptop-body">
           <h3>${l.name}</h3>
           <div class="brand-sub">Refurbished · ${l.brand}</div>
           <div class="spec-sheet">
-            <div class="spec-row"><span>CPU</span><span>${l.cpu}</span></div>
-            <div class="spec-row"><span>RAM</span><span>${l.ram}</span></div>
-            <div class="spec-row"><span>Storage</span><span>${l.storage}</span></div>
-            <div class="spec-row"><span>Display</span><span>${l.screen}</span></div>
+            <div class="spec-row"><span>CPU</span><span>${l.cpu || "-"}</span></div>
+            <div class="spec-row"><span>RAM</span><span>${l.ram || "-"}</span></div>
+            <div class="spec-row"><span>Storage</span><span>${l.storage || "-"}</span></div>
+            <div class="spec-row"><span>Display</span><span>${l.screen || "-"}</span></div>
           </div>
           <div class="price-row">
             <span class="price">${inr(l.price)}</span>
@@ -235,18 +236,26 @@
     grid.innerHTML = list.map(cardHtml).join('');
   }
 
+  function buildFilterChips(list) {
+    const brands = ["all", ...new Set(list.map(l => l.brand).filter(Boolean))];
+    filterRow.innerHTML = brands.map((b, i) => `
+      <button class="chip ${i === 0 ? 'active' : ''}" data-filter="${b}">${b === 'all' ? 'All' : b}</button>
+    `).join('');
+
+    filterRow.querySelectorAll('.chip').forEach(chip => {
+      chip.addEventListener('click', () => {
+        filterRow.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const f = chip.dataset.filter;
+        render(f === 'all' ? ALL_LAPTOPS : ALL_LAPTOPS.filter(l => l.brand.toLowerCase() === f.toLowerCase()));
+      });
+    });
+  }
+
   loadLaptops().then(list => {
     ALL_LAPTOPS = list;
+    buildFilterChips(ALL_LAPTOPS);
     render(ALL_LAPTOPS);
-  });
-
-  document.querySelectorAll('.chip').forEach(chip => {
-    chip.addEventListener('click', () => {
-      document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-      chip.classList.add('active');
-      const f = chip.dataset.filter;
-      render(f === 'all' ? ALL_LAPTOPS : ALL_LAPTOPS.filter(l => l.brand === f));
-    });
   });
 
   const SERVICES = [

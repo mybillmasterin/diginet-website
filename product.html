@@ -68,6 +68,7 @@
         <div class="contact-line" style="display:block;"><a href="index.html#about">About Us</a></div>
         <div class="contact-line" style="display:block;"><a href="index.html#laptops">Refurbished Laptops</a></div>
         <div class="contact-line" style="display:block;"><a href="index.html#services">Our Services</a></div>
+        <div class="contact-line" style="display:block;"><a href="admin.html" style="color:var(--leaf-light); font-weight:600;">🔒 Admin Portal</a></div>
       </div>
       <div>
         <h4>Serving</h4>
@@ -79,7 +80,7 @@
     </div>
     <div class="bottom-bar">
       <span>© 2026 Diginet IT Solutions. All rights reserved.</span>
-      <span>www.diginetitsolutions.com</span>
+      <span><a href="admin.html" style="color:rgba(255,255,255,0.45); transition:color .2s;">Admin Login</a> · www.diginetitsolutions.com</span>
     </div>
   </div>
 </footer>
@@ -196,10 +197,10 @@
   const params = new URLSearchParams(window.location.search);
   const id = params.get('id');
 
-  loadLaptops().then(list => {
+  DiginetDB.getAll().then(list => {
     const found = list.find(l => l.id === id);
     if (!found){ renderNotFound(); return; }
-    const related = list.filter(l => l.id !== id).slice(0, 3);
+    const related = list.filter(l => l.id !== id && (l.status || "active") !== "sold").slice(0, 3);
     renderProduct(found, related);
   });
 
